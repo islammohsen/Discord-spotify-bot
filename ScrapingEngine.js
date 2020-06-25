@@ -12,9 +12,10 @@ const getChromiumExecPath = () => {
 };
 
 const startBrowser = async () => {
-  // puppeteer.use(StealthPlugin());
+  puppeteer.use(StealthPlugin());
   browser = await puppeteer.launch({
     headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 };
 
