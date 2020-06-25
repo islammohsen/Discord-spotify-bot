@@ -104,10 +104,11 @@ class CommandHandler {
       console.log(serverQueue);
       if (serverQueue.songs.length == 0)
         return message.channel.send("Queue is empty!");
-      else
-        return serverQueue.songs.forEach((song) => {
-          message.channel.send(song);
+      else {
+        return message.channel.send(serverQueue.songs.join("\n"), {
+          split: true,
         });
+      }
     } else return message.channel.send("Queue is empty!");
   };
 
