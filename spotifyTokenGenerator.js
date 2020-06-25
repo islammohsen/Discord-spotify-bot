@@ -7,6 +7,7 @@ const getToken = (CLIENT_ID, CLIENT_SECRET) =>
       args: [CLIENT_ID, CLIENT_SECRET],
     };
     PythonShell.PythonShell.run("script.py", options, (err, output) => {
+      if (err) console.log(err);
       resolve(output[0]);
     });
   });
