@@ -19,6 +19,8 @@ class CommandHandler {
   }
   static handle_command(commandName, message, args) {
     if (this.isValidCommandName(commandName)) {
+      if (!message.guild.voice || !message.guild.voice.channelID)
+        queue.delete(message.guild.id);
       this[`onMessage_${commandName}`](message, args);
       return true;
     } else return false;
