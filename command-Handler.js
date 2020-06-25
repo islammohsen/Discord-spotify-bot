@@ -26,16 +26,8 @@ class CommandHandler {
   static onMessage_ping = (message, args) => {
     message.reply("pong!");
   };
-  static onMessage_tophits = async (message, args) => {
-    let limit = 5;
-    if (args.length > 1) return message.channel.send("Invalid arguments");
-    if (args.length == 1) {
-      limit = parseInt(args[0]);
-      if (limit > 50) return message.channel.send("Too many songs");
-      if (limit == NaN) return message.channel.send("Invalid arguments");
-    }
-    let songs = await spotify.getTopHits(limit);
-    console.log(songs);
+
+  static addSongs = async (message, songs) => {
     const serverQueue = queue.get(message.guild.id);
     const voiceChannel = message.member.voice.channel;
     if (!voiceChannel)
@@ -86,6 +78,36 @@ class CommandHandler {
       }
     }
   };
+  static onMessage_tophits = async (message, args) => {
+    let limit = 5;
+    if (args.length > 1) return message.channel.send("Invalid arguments");
+    if (args.length == 1) {
+      limit = parseInt(args[0]);
+      if (limit > 50) return message.channel.send("Too many songs");
+      if (limit == NaN) return message.channel.send("Invalid arguments");
+    }
+    let songs = await spotify.getTopHits(limit);
+    console.log(songs);
+    return this.addSongs(message, songs);
+  };
+
+  static onMessage_add = async (message, args) => {
+    if (args.length == 0) return message.channel.send("Invalid arguments");
+    return this.addSongs(message, [args.join(" ")]);
+  };
+
+  static onMessage_queue = async (message, args) => {
+    const serverQueue = queue.get(message.guild.id);
+    if (serverQueue) {
+      console.log(serverQueue);
+      if (serverQueue.songs.length == 0)
+        return message.channel.send("Queue is empty!");
+      else
+        return serverQueue.songs.forEach((song) => {
+          message.channel.send(song);
+        });
+    } else return message.channel.send("Queue is empty!");
+  };
 
   static play = async (guild, song) => {
     const serverQueue = queue.get(guild.id);
@@ -104,7 +126,7 @@ class CommandHandler {
       })
       .on("error", (error) => console.error(error));
     dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
-    serverQueue.textChannel.send(`Start playing: **${song}**`);
+    serverQueue.textChannel.send(`Start playing: **${songInfo.title}**`);
   };
 
   static onMessage_skip = (message, args) => {
