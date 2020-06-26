@@ -152,7 +152,7 @@ class CommandHandler {
         "You have to be in a voice channel to stop the music!"
       );
     serverQueue.voiceChannel.leave();
-    queue.delete(guild.id);
+    queue.delete(message.guild.id);
   };
 }
 
