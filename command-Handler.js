@@ -140,7 +140,9 @@ class CommandHandler {
       );
     if (!serverQueue)
       return message.channel.send("There is no song that I could skip!");
-    serverQueue.connection.dispatcher.end();
+    if (serverQueue.connection.dispatcher)
+      serverQueue.connection.dispatcher.end();
+    else return message.channel.send("There is no song that I could skip!");
   };
 
   static onMessage_stop = (message, args) => {
@@ -149,8 +151,8 @@ class CommandHandler {
       return message.channel.send(
         "You have to be in a voice channel to stop the music!"
       );
-    serverQueue.songs = [];
-    serverQueue.connection.dispatcher.end();
+    serverQueue.voiceChannel.leave();
+    queue.delete(guild.id);
   };
 }
 
